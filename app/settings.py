@@ -1,0 +1,16 @@
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=".env")
+
+    SECRET_KEY: str
+    access_token_expire_min: int = 36000
+    algorithm: str = "HS256"
+
+
+settings = Settings()
