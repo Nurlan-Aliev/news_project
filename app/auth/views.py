@@ -4,12 +4,11 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from app.auth.jwt_help import create_jwt, decode_jwt
 from app.auth.validate import validate_auth_user
 from app.auth import schemas
-from app.database import create_user
-from app.auth.validate import hash_password
+from app.auth.crud import crete_new_user
 
 
 router = APIRouter(tags=['Auth'])
-http_bearer = HTTPBearer()
+http_bearer = HTTPBearer(auto_error=False)
 
 
 @router.post("/sign_in")
@@ -22,11 +21,9 @@ async def auth_user_issue_jwt(
 
 @router.post("/sign_up")
 async def auth_user_issue_jwt(
-    user: schemas.CreateUser,
+    user: schemas.ReadUser = Depends(crete_new_user),
 ):
-    user.password = hash_password(user.password)
-    create_user(user)
-    return 'user was created'
+    return user
 
 
 @router.get("/users/me")

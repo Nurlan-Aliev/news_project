@@ -3,14 +3,15 @@ from pydantic import BaseModel
 
 class User(BaseModel):
     username: str
-    password: str
+    first_name: str
+    last_name: str
+
 
 
 class CreateUser(User):
-    first_name: str
-    last_name: str
-    status: str
+    password: str
 
 
-class ReadUser(CreateUser):
+class ReadUser(User):
     id: int
+    status: str
