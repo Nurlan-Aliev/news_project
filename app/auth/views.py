@@ -1,13 +1,12 @@
 from fastapi import APIRouter, Depends
-from typing import Annotated
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from app.auth.jwt_help import create_jwt, decode_jwt
+from fastapi.security import HTTPBearer
+from app.auth.jwt_help import create_jwt, get_current_token_payload
 from app.auth.validate import validate_auth_user
 from app.auth import schemas
 from app.auth.crud import crete_new_user
 
 
-router = APIRouter(tags=['Auth'])
+router = APIRouter(tags=["Auth"])
 http_bearer = HTTPBearer(auto_error=False)
 
 
@@ -28,8 +27,8 @@ async def auth_user_issue_jwt(
 
 @router.get("/users/me")
 def read_current_user(
-    credentials: Annotated[HTTPAuthorizationCredentials, Depends(http_bearer)],
+    credentials=Depends(get_current_token_payload),
 ):
     if not credentials:
         return "error"
-    return {"credentials": decode_jwt(credentials.credentials)}
+    return {"credentials": credentials}

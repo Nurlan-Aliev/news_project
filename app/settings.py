@@ -1,3 +1,6 @@
+import os
+from pathlib import Path
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from dotenv import load_dotenv
 
@@ -11,6 +14,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     access_token_expire_min: int = 36000
     algorithm: str = "HS256"
+    db_path: Path = Path("app/database.json").resolve()
 
 
 settings = Settings()

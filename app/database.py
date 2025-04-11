@@ -1,32 +1,29 @@
 import secrets
 from json import loads, dumps
-import os
-
-
-db_path = os.path.abspath('app/auth/database.json')
+from app.settings import settings
 
 
 def get_database() -> list:
-    with open(db_path, 'r') as f:
+    with open(settings.db_path, "r") as f:
         result = f.read()
     return loads(result)
 
 
-def create_user(user):
+def create_data(user, base):
     db = get_database()
-    user['id'] = len(db)+1
-    db.append(user)
+    user["id"] = len(db[base]) + 1
+    db[base].append(user)
     data = dumps(db, indent=4)
-    with open(db_path, 'w') as f:
+    with open(settings.db_path, "w") as f:
         f.write(data)
     return user
 
 
-def get_user_db(username):
+def get_user_db(username, data):
     username_bytes = username.encode("utf8")
     database = get_database()
-    for user in database:
-        correct_username_bytes = user['username'].encode("utf8")
+    for user in database[data]:
+        correct_username_bytes = user["username"].encode("utf8")
         if secrets.compare_digest(correct_username_bytes, username_bytes):
-            user['password'] = user['password'].encode()
+            user["password"] = user["password"].encode()
             return user

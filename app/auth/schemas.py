@@ -7,7 +7,6 @@ class User(BaseModel):
     last_name: str
 
 
-
 class CreateUser(User):
     password: str
 
