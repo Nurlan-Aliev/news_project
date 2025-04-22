@@ -1,29 +1,26 @@
-import secrets
-from json import loads, dumps
+from sqlalchemy.orm import DeclarativeBase, sessionmaker
+import sqlalchemy
 from app.settings import settings
 
 
-def get_database() -> list:
-    with open(settings.db_path, "r") as f:
-        result = f.read()
-    return loads(result)
+class Base(DeclarativeBase):
+    pass
 
 
-def create_data(user, base):
-    db = get_database()
-    user["id"] = len(db[base]) + 1
-    db[base].append(user)
-    data = dumps(db, indent=4)
-    with open(settings.db_path, "w") as f:
-        f.write(data)
-    return user
+class DataBaseHelper:
+    def __init__(self, path, echo=False):
+        self.engine = sqlalchemy.create_engine(url=path, echo=echo)
+
+        self.session_factory = sessionmaker(
+            self.engine, autoflush=False, expire_on_commit=False, autocommit=False
+        )
+
+    def session_depends(self):
+        with self.session_factory() as session:
+            yield session
 
 
-def get_user_db(username, data):
-    username_bytes = username.encode("utf8")
-    database = get_database()
-    for user in database[data]:
-        correct_username_bytes = user["username"].encode("utf8")
-        if secrets.compare_digest(correct_username_bytes, username_bytes):
-            user["password"] = user["password"].encode()
-            return user
+db_helper = DataBaseHelper(
+    settings.db_path,
+    settings.DEBAG,
+)

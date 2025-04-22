@@ -1,6 +1,3 @@
-import os
-from pathlib import Path
-
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from dotenv import load_dotenv
 
@@ -14,7 +11,14 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     access_token_expire_min: int = 36000
     algorithm: str = "HS256"
-    db_path: Path = Path("app/database.json").resolve()
+
+    DATABASE_PATH: str = "my_database.db"
+
+    DEBAG: bool
+
+    @property
+    def db_path(self):
+        return f"sqlite:///{self.DATABASE_PATH}"
 
 
 settings = Settings()

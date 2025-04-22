@@ -1,34 +1,16 @@
-from fastapi import HTTPException, status
-from fastapi.params import Form
-from app.database import create_data, get_user_db
-from app.auth.validate import hash_password
-from app.auth import schemas
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+from app.auth.models import User
 
 
-def get_user(username):
-    user = get_user_db(username, "user")
-    if user:
-        return user
-    raise HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED, detail="user not found"
-    )
+def get_user(username: str, session: Session) -> User:
+    stmt = select(User).where(User.username == username)
+    user = session.scalar(stmt)
+    return user
 
 
-def crete_new_user(
-    first_name: str = Form(),
-    last_name: str = Form(),
-    username: str = Form(),
-    password: str = Form(),
-):
-
-    password = hash_password(password)
-    password = password.decode()
-    user = {
-        "username": username,
-        "password": password,
-        "first_name": first_name,
-        "last_name": last_name,
-        "status": "user",
-    }
-    user = create_data(user, "user")
-    return schemas.ReadUser(**user)
+def create_new_user(user: dict, session: Session) -> User:
+    new_user = User(**user)
+    session.add(new_user)
+    session.commit()
+    return new_user

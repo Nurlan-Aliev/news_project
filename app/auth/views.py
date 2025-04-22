@@ -1,17 +1,17 @@
-from fastapi import APIRouter, Depends
-from fastapi.security import HTTPBearer
-from app.auth.jwt_help import create_jwt, get_current_token_payload
-from app.auth.validate import validate_auth_user
 from app.auth import schemas
-from app.auth.crud import crete_new_user
+from app.auth import crud
+from app.auth.jwt_help import create_jwt, get_current_token_payload
+from app.auth.validate import validate_auth_user, crete_new_user
+from app.database import db_helper
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 
 
 router = APIRouter(tags=["Auth"])
-http_bearer = HTTPBearer(auto_error=False)
 
 
 @router.post("/sign_in")
-async def auth_user_issue_jwt(
+def auth_user_issue_jwt(
     user: schemas.CreateUser = Depends(validate_auth_user),
 ):
     access_token = create_jwt(user)
@@ -19,10 +19,12 @@ async def auth_user_issue_jwt(
 
 
 @router.post("/sign_up")
-async def auth_user_issue_jwt(
-    user: schemas.ReadUser = Depends(crete_new_user),
+def auth_user_issue_jwt(
+    user: dict = Depends(crete_new_user),
+    session: Session = Depends(db_helper.session_depends),
 ):
-    return user
+    new_user = crud.create_new_user(user, session)
+    return schemas.ReadUser.from_orm(new_user)
 
 
 @router.get("/users/me")

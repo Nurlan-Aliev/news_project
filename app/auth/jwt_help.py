@@ -1,17 +1,17 @@
 from datetime import datetime, UTC, timedelta
 from fastapi import HTTPException, status
 from fastapi.params import Depends
-from fastapi.security import OAuth2PasswordBearer, HTTPBearer
+from fastapi.security import HTTPBearer
 from app.settings import settings
-from app.auth.schemas import CreateUser
+from app.auth.schemas import ReadUser
 import jwt
 
 
 http_bearer = HTTPBearer(auto_error=False)
 
 
-def create_jwt(user: CreateUser) -> str:
-    jwt_pyload = {"id": user["id"], "username": user["username"]}
+def create_jwt(user: ReadUser) -> str:
+    jwt_pyload = {"id": user.id, "username": user.username}
     return encode_jwt(payload=jwt_pyload)
 
 
@@ -46,7 +46,11 @@ def get_current_token_payload(
     try:
         payload = decode_jwt(token=token.credentials)
         return payload
-    except jwt.exceptions.InvalidTokenError as e:
+    except AttributeError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail=f"invalid token error"
+        )
+    except jwt.exceptions.InvalidTokenError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail=f"invalid token error"
         )

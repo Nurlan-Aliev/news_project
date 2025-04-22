@@ -6,6 +6,10 @@ class User(BaseModel):
     first_name: str
     last_name: str
 
+    class Config:
+        orm_mode = True
+        from_attributes = True
+
 
 class CreateUser(User):
     password: str
