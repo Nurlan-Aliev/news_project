@@ -11,12 +11,3 @@ class User(Base):
     first_name: Mapped[str]
     last_name: Mapped[str]
     status: Mapped[str]
-
-    def __repr__(self):
-        return {
-            "id": self.id,
-            "username": self.username,
-            "first_name": self.first_name,
-            "last_name": self.last_name,
-            "status": self.status,
-        }
