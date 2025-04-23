@@ -24,7 +24,9 @@ def encode_jwt(payload: dict):
         iat=utcnow,
     )
 
-    encoded = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.algorithm)
+    encoded = jwt.encode(
+        to_encode, settings.SECRET_KEY, algorithm=settings.algorithm
+    )
     return encoded
 
 
@@ -48,9 +50,11 @@ def get_current_token_payload(
         return payload
     except AttributeError:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail=f"invalid token error"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"invalid token error",
         )
     except jwt.exceptions.InvalidTokenError:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail=f"invalid token error"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"invalid token error",
         )

@@ -25,12 +25,15 @@ def validate_password(
     password: str,
     hashed_password: bytes,
 ) -> bool:
-    return bcrypt.checkpw(password=password.encode(), hashed_password=hashed_password)
+    return bcrypt.checkpw(
+        password=password.encode(), hashed_password=hashed_password
+    )
 
 
 def auth_user(username: str, password: str, session: Session) -> User:
     unauthed_exp = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid username or password"
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid username or password",
     )
     if not (user := get_user(username, session)):
         raise unauthed_exp
