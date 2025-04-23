@@ -59,3 +59,7 @@ def is_admin(token: HTTPBearer = Depends(http_bearer)):
     payload = decode_jwt(token=token.credentials)
     if payload["role"] == "admin":
         return payload
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="you don't have permisions",
+    )
