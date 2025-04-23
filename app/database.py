@@ -12,7 +12,10 @@ class DataBaseHelper:
         self.engine = sqlalchemy.create_engine(url=path, echo=echo)
 
         self.session_factory = sessionmaker(
-            self.engine, autoflush=False, expire_on_commit=False, autocommit=False
+            self.engine,
+            autoflush=False,
+            expire_on_commit=False,
+            autocommit=False,
         )
 
     def session_depends(self):

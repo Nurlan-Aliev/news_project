@@ -28,7 +28,52 @@ def get_all_news(
 
 
 @router.get("/{idx}", response_model=schemas.ReadNewsSchemas)
-def get_news(idx: int, session: Session = Depends(db_helper.session_depends)):
+def get_news(
+    idx: int,
+    session: Session = Depends(db_helper.session_depends),
+):
     if news := crud.get_news(idx, session):
         return news
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+
+@router.patch("/{idx}", response_model=schemas.ReadNewsSchemas)
+def update_news(
+    idx: int,
+    new_data: schemas.UpdateNewsSchemas,
+    session: Session = Depends(db_helper.session_depends),
+    user=Depends(get_current_token_payload),
+):
+    news = get_news(idx, session)
+    if news is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="This news is not found",
+        )
+    if news.status:
+        raise HTTPException(
+            status_code=400, detail="Cannot update confirmed news"
+        )
+    if news.user_id != user["id"]:
+        raise HTTPException(
+            status_code=403, detail="You can only edit your own news"
+        )
+
+    news = crud.update_news(news, new_data, session)
+    return schemas.ReadNewsSchemas.from_orm(news)
+
+
+@router.delete("/{idx}")
+def delete_news(
+    idx: int,
+    session: Session = Depends(db_helper.session_depends),
+    user=Depends(get_current_token_payload),
+):
+    news = get_news(idx, session)
+    if news.user_id != user["id"]:
+        raise HTTPException(
+            status_code=403, detail="You can delete only your own news"
+        )
+
+    crud.delete_news(news, session)
+    return "news was deleted"

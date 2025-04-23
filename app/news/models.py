@@ -11,7 +11,7 @@ class News(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str]
     content: Mapped[str]
-    status: Mapped[bool]
+    status: Mapped[bool] = mapped_column(default=False)
     user_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("users.id", ondelete="SET NULL"), nullable=True
     )

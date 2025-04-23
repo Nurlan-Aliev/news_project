@@ -19,3 +19,8 @@ class ReadNewsSchemas(NewsSchemas):
 
 class CreateNewsSchema(NewsSchemas):
     pass
+
+
+class UpdateNewsSchemas(NewsSchemas):
+    title: str | None = None
+    content: str | None = None
