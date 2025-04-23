@@ -11,7 +11,7 @@ class User(Base):
     password: Mapped[bytes]
     first_name: Mapped[str]
     last_name: Mapped[str]
-    status: Mapped[str]
+    role: Mapped[str] = mapped_column(default="user")
     news: Mapped[List["News"]] = relationship(
         back_populates="user", passive_deletes=True
     )

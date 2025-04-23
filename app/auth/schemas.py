@@ -12,9 +12,9 @@ class User(BaseModel):
 
 
 class CreateUser(User):
-    password: str
+    password: bytes
 
 
 class ReadUser(User):
     id: int
-    status: str
+    role: str

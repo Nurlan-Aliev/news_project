@@ -11,7 +11,7 @@ http_bearer = HTTPBearer(auto_error=False)
 
 
 def create_jwt(user: ReadUser) -> str:
-    jwt_pyload = {"id": user.id, "username": user.username}
+    jwt_pyload = {"id": user.id, "username": user.username, "role": user.role}
     return encode_jwt(payload=jwt_pyload)
 
 
@@ -39,22 +39,23 @@ def decode_jwt(token: str | bytes):
     except jwt.exceptions.InvalidSignatureError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
+    except jwt.exceptions.InvalidTokenError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"invalid token error2",
+        )
+
 
 def get_current_token_payload(
     token: HTTPBearer = Depends(http_bearer),
 ) -> dict:
     """returns payload from jwt"""
+    print(token)
+    payload = decode_jwt(token=token.credentials)
+    return payload
 
-    try:
-        payload = decode_jwt(token=token.credentials)
+
+def is_admin(token: HTTPBearer = Depends(http_bearer)):
+    payload = decode_jwt(token=token.credentials)
+    if payload["role"] == "admin":
         return payload
-    except AttributeError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"invalid token error",
-        )
-    except jwt.exceptions.InvalidTokenError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"invalid token error",
-        )

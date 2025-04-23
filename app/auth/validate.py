@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app.auth.crud import get_user
 from app.auth.models import User
 from app.database import db_helper
+from app.auth import schemas
 
 
 def hash_password(password: str) -> bytes:
@@ -50,11 +51,10 @@ def crete_new_user(
 ):
 
     password = hash_password(password)
-    user = {
-        "username": username,
-        "password": password,
-        "first_name": first_name,
-        "last_name": last_name,
-        "status": "user",
-    }
+    user = schemas.CreateUser(
+        username=username,
+        password=password,
+        first_name=first_name,
+        last_name=last_name,
+    )
     return user
