@@ -42,24 +42,33 @@ def decode_jwt(token: str | bytes):
     except jwt.exceptions.InvalidTokenError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"invalid token error2",
+            detail=f"invalid token error",
         )
 
 
 def get_current_token_payload(
     token: HTTPBearer = Depends(http_bearer),
 ) -> dict:
-    """returns payload from jwt"""
-    print(token)
-    payload = decode_jwt(token=token.credentials)
-    return payload
+    try:
+        print(token)
+        payload = decode_jwt(token=token.credentials)
+        return payload
+    except AttributeError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="need to log in "
+        )
 
 
 def is_admin(token: HTTPBearer = Depends(http_bearer)):
-    payload = decode_jwt(token=token.credentials)
-    if payload["role"] == "admin":
-        return payload
-    raise HTTPException(
-        status_code=status.HTTP_403_FORBIDDEN,
-        detail="you don't have permisions",
-    )
+    try:
+        payload = decode_jwt(token=token.credentials)
+        if payload.get("role") == "admin":
+            return payload
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="you don't have permissions",
+        )
+    except AttributeError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="need to log in "
+        )
