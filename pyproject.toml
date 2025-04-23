@@ -16,3 +16,14 @@ sqlalchemy = "^2.0.40"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 80
+exclude='''
+/(
+    .git
+    .coverage
+    __pycache__
+    .idea
+)/
+'''
