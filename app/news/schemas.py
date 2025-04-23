@@ -14,7 +14,7 @@ class NewsSchemas(BaseModel):
 class ReadNewsSchemas(NewsSchemas):
     id: int
     user: User
-    status: bool
+    status: str
 
 
 class CreateNewsSchema(NewsSchemas):

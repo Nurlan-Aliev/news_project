@@ -50,7 +50,7 @@ def update_news(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="This news is not found",
         )
-    if news.status:
+    if news.status == "confirmed":
         raise HTTPException(
             status_code=400, detail="Cannot update confirmed news"
         )

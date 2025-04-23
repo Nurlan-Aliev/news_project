@@ -18,7 +18,7 @@ def create_news(data: schemas.CreateNewsSchema, user, session: Session) -> News:
 
 
 def get_all_news(session: Session) -> Sequence[News]:
-    stmt = select(News).where(News.status)
+    stmt = select(News).where(News.status == "confirmed")
     all_news = session.scalars(stmt).all()
     print(type(all_news))
     return all_news
