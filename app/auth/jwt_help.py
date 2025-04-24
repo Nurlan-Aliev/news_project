@@ -18,14 +18,14 @@ def create_jwt(user: ReadUser) -> str:
 def encode_jwt(payload: dict):
     to_encode = payload.copy()
     utcnow = datetime.now(UTC)
-    expire = utcnow + timedelta(minutes=settings.access_token_expire_min)
+    expire = utcnow + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update(
         exp=expire,
         iat=utcnow,
     )
 
     encoded = jwt.encode(
-        to_encode, settings.SECRET_KEY, algorithm=settings.algorithm
+        to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM
     )
     return encoded
 
@@ -33,7 +33,7 @@ def encode_jwt(payload: dict):
 def decode_jwt(token: str | bytes):
     try:
         decoded = jwt.decode(
-            token, settings.SECRET_KEY, algorithms=[settings.algorithm]
+            token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
         )
         return decoded
     except jwt.exceptions.InvalidSignatureError:

@@ -9,10 +9,10 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env")
 
     SECRET_KEY: str
-    access_token_expire_min: int = 36000
-    algorithm: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
+    ALGORITHM: str
 
-    DATABASE_PATH: str = "my_database.db"
+    DATABASE_PATH: str
 
     DEBAG: bool
 
