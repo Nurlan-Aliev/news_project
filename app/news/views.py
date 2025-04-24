@@ -5,12 +5,13 @@ from app.auth.jwt_help import get_current_token_payload
 from app.database import db_helper
 from app.news import schemas
 from app.news import crud
+from app.settings import settings
 
 router = APIRouter(tags=["News"])
 
 
 @router.post("/", response_model=schemas.ReadNewsSchemas)
-def create_new_post(
+def create_news(
     news: schemas.CreateNewsSchema,
     user=Depends(get_current_token_payload),
     session: Session = Depends(db_helper.session_depends),
@@ -50,7 +51,7 @@ def update_news(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="This news is not found",
         )
-    if news.status == "confirmed":
+    if news.status == settings.news_status["confirm"]:
         raise HTTPException(
             status_code=400, detail="Cannot update confirmed news"
         )

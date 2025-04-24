@@ -10,7 +10,7 @@ from app.settings import settings
 router = APIRouter(tags=["Admin"], dependencies=[Depends(is_admin)])
 
 
-@router.get("/news/pending", response_model=list[schemas.ReadNewsSchemas])
+@router.get("/pending", response_model=list[schemas.ReadNewsSchemas])
 def get_pending_news(
     session: Session = Depends(db_helper.session_depends),
 ):
@@ -21,7 +21,7 @@ def get_pending_news(
     ]
 
 
-@router.post("/news/{idx}/confirm", response_model=schemas.ReadNewsSchemas)
+@router.post("/{idx}/approve", response_model=schemas.ReadNewsSchemas)
 def approve_news(
     idx: int, session: Session = Depends(db_helper.session_depends)
 ):
@@ -34,7 +34,7 @@ def approve_news(
     )
 
 
-@router.post("/news/{idx}/reject", response_model=schemas.ReadNewsSchemas)
+@router.post("/{idx}/reject", response_model=schemas.ReadNewsSchemas)
 def reject_news(
     idx: int, session: Session = Depends(db_helper.session_depends)
 ):

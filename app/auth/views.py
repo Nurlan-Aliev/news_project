@@ -33,12 +33,3 @@ def auth_user_issue_jwt(
 
     new_user = crud.create_new_user(new_user, session)
     return schemas.ReadUser.from_orm(new_user)
-
-
-@router.get("/users/me")
-def read_current_user(
-    credentials=Depends(is_admin),
-):
-    if not credentials:
-        return "error"
-    return {"credentials": credentials}
