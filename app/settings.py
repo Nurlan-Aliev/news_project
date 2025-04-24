@@ -16,6 +16,12 @@ class Settings(BaseSettings):
 
     DEBAG: bool
 
+    news_status: dict = {
+        "confirm": "confirm",
+        "reject": "reject",
+        "pending": "pending",
+    }
+
     @property
     def db_path(self):
         return f"sqlite:///{self.DATABASE_PATH}"

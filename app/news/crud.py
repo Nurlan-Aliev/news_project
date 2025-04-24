@@ -1,10 +1,10 @@
 from typing import Sequence
-
-from sqlalchemy import select
+from sqlalchemy import select, desc
 from sqlalchemy.orm import Session
 from app.news import schemas
 from app.auth.crud import get_user
 from app.news.models import News
+from app.settings import settings
 
 
 def create_news(data: schemas.CreateNewsSchema, user, session: Session) -> News:
@@ -18,9 +18,12 @@ def create_news(data: schemas.CreateNewsSchema, user, session: Session) -> News:
 
 
 def get_all_news(session: Session) -> Sequence[News]:
-    stmt = select(News).where(News.status == "confirmed")
+    stmt = (
+        select(News)
+        .where(News.status == settings.news_status["confirm"])
+        .order_by(desc(News.id))
+    )
     all_news = session.scalars(stmt).all()
-    print(type(all_news))
     return all_news
 
 
@@ -33,9 +36,9 @@ def get_news(idx: int, session: Session) -> News:
 def update_news(
     news: News, new_data: schemas.UpdateNewsSchemas, session: Session
 ) -> News:
-    news.title = new_data.title if new_data.title is None else news.title
+    news.title = new_data.title if new_data.title is not None else news.title
     news.content = (
-        new_data.content if new_data.content is None else news.content
+        new_data.content if new_data.content is not None else news.content
     )
     session.commit()
     return news
