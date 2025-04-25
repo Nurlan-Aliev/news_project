@@ -1,13 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-
 from app.auth.jwt_help import get_current_token_payload
 from app.database import db_helper
 from app.news import schemas
 from app.news import crud
 from app.settings import settings
+from app.news.admin.views import router as admin_router
+
 
 router = APIRouter(tags=["News"])
+router.include_router(admin_router, prefix="/admin")
 
 
 @router.post("/", response_model=schemas.ReadNewsSchemas)

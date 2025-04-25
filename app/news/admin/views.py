@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.auth.jwt_help import is_admin
-from app.admin import crud
+from app.news.admin import crud
 from app.database import db_helper
 from app.news import schemas
 from app.settings import settings
