@@ -19,7 +19,7 @@ def create_news(
     session: Session = Depends(db_helper.session_depends),
 ):
     new_news = crud.create_news(news, user, session)
-    return schemas.ReadNewsSchemas.from_orm(new_news)
+    return schemas.ReadNewsSchemas.model_validate(new_news)
 
 
 @router.get("/", response_model=list[schemas.ReadNewsSchemas])
@@ -27,7 +27,7 @@ def get_all_news(
     session: Session = Depends(db_helper.session_depends),
 ) -> list[schemas.ReadNewsSchemas]:
     all_news = crud.get_all_news(session)
-    return [schemas.ReadNewsSchemas.from_orm(news) for news in all_news]
+    return [schemas.ReadNewsSchemas.model_validate(news) for news in all_news]
 
 
 @router.get("/{idx}", response_model=schemas.ReadNewsSchemas)
@@ -63,7 +63,7 @@ def update_news(
         )
 
     news = crud.update_news(news, new_data, session)
-    return schemas.ReadNewsSchemas.from_orm(news)
+    return schemas.ReadNewsSchemas.model_validate(news)
 
 
 @router.delete("/{idx}")

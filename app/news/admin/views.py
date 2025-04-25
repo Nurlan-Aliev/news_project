@@ -16,7 +16,7 @@ def get_pending_news(
 ):
 
     return [
-        schemas.ReadNewsSchemas.from_orm(news)
+        schemas.ReadNewsSchemas.model_validate(news)
         for news in crud.get_pending_news(session)
     ]
 
@@ -28,7 +28,7 @@ def approve_news(
 
     news = crud.verify_news(idx, settings.news_status["confirm"], session)
     if news:
-        return schemas.ReadNewsSchemas.from_orm(news)
+        return schemas.ReadNewsSchemas.model_validate(news)
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND, detail="news not found"
     )
@@ -41,7 +41,7 @@ def reject_news(
 
     news = crud.verify_news(idx, settings.news_status["reject"], session)
     if news:
-        return schemas.ReadNewsSchemas.from_orm(news)
+        return schemas.ReadNewsSchemas.model_validate(news)
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND, detail="news not found"
     )

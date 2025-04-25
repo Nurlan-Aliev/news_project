@@ -1,14 +1,11 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from app.auth.schemas import User
 
 
 class NewsSchemas(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     title: str
     content: str
-
-    class Config:
-        orm_mode = True
-        from_attributes = True
 
 
 class ReadNewsSchemas(NewsSchemas):
