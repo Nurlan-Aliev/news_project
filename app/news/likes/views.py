@@ -14,7 +14,8 @@ def set_like(
     user=Depends(get_current_token_payload),
     session: Session = Depends(db_helper.session_depends),
 ):
-    crud.set_like(news_id, user["id"], session)
+    if not crud.get_like(news_id, user["id"], session):
+        crud.set_like(news_id, user["id"], session)
     return "like"
 
 
@@ -24,5 +25,6 @@ def delete_like(
     session: Session = Depends(db_helper.session_depends),
     user=Depends(get_current_token_payload),
 ):
-    crud.delete_like(news_id, user["id"], session)
+    reaction = crud.get_like(news_id, user["id"], session)
+    crud.delete_like(reaction, session)
     return "delete like"

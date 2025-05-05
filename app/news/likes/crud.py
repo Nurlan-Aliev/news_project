@@ -10,22 +10,18 @@ def set_like(news_id: int, user_id: int, session: Session):
     session.commit()
 
 
-def delete_like(news_id: int, user_id: int, session: Session):
+def delete_like(reaction, session: Session):
+    if reaction:
+        session.delete(reaction)
+        session.commit()
+
+
+def get_like(news_id: int, user_id: int, session: Session):
     reaction = select(Reaction).where(
         Reaction.news_id == news_id,
         Reaction.user_id == user_id,
     )
-    session.delete(reaction)
-    session.commit()
 
-
-def get_like(news_id: int, user_id: int, session: Session):
-    reaction = select(
-        exists().where(
-            Reaction.news_id == news_id,
-            Reaction.user_id == user_id,
-        )
-    )
     return session.scalar(reaction)
 
 
