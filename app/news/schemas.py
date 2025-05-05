@@ -1,5 +1,6 @@
 from pydantic import BaseModel, ConfigDict
 from app.auth.schemas import User
+from app.news.likes.schemas import LikesSchemas
 
 
 class NewsSchemas(BaseModel):
@@ -12,6 +13,7 @@ class ReadNewsSchemas(NewsSchemas):
     id: int
     user: User
     status: str
+    reactions: list[LikesSchemas]
 
 
 class CreateNewsSchema(NewsSchemas):
