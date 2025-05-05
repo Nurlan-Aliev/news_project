@@ -50,7 +50,6 @@ def get_current_token_payload(
     token: HTTPBearer = Depends(http_bearer),
 ) -> dict:
     try:
-        print(token)
         payload = decode_jwt(token=token.credentials)
         return payload
     except AttributeError:

@@ -3,7 +3,7 @@ from fastapi import HTTPException, status, Depends
 from fastapi.params import Form
 from sqlalchemy.orm import Session
 from app.auth.crud import get_user
-from app.auth.models import User
+from app.auth.models import Users
 from app.database import db_helper
 from app.auth import schemas
 
@@ -18,7 +18,7 @@ def validate_auth_user(
     username: str = Form(),
     password: str = Form(),
     session: Session = Depends(db_helper.session_depends),
-) -> User:
+) -> Users:
     return auth_user(username, password, session)
 
 
@@ -31,7 +31,7 @@ def validate_password(
     )
 
 
-def auth_user(username: str, password: str, session: Session) -> User:
+def auth_user(username: str, password: str, session: Session) -> Users:
     unauthed_exp = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid username or password",
