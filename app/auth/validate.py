@@ -44,17 +44,20 @@ def auth_user(username: str, password: str, session: Session) -> Users:
 
 
 def crete_new_user(
-    first_name: str = Form(),
-    last_name: str = Form(),
+    full_name: str = Form(),
     username: str = Form(),
     password: str = Form(),
+    confirm_password: str = Form(),
 ):
-
+    if password != confirm_password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Passwords do not match",
+        )
     password = hash_password(password)
     user = schemas.CreateUser(
         username=username,
         password=password,
-        first_name=first_name,
-        last_name=last_name,
+        full_name=full_name,
     )
     return user
