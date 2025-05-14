@@ -1,15 +1,31 @@
-from sqlalchemy import select, exists
+from typing import Sequence
+
+from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 from app.news.likes.models import Reaction
-from app.auth.crud import get_user
 
 
 def get_like(news_id: int, user_id: int, session: Session) -> Reaction:
-    reaction = select(Reaction).where(
-        Reaction.news_id == news_id,
-        Reaction.user_id == user_id,
+    reaction = (
+        select(Reaction)
+        .where(
+            Reaction.news_id == news_id,
+        )
+        .where(
+            Reaction.user_id == user_id,
+        )
     )
+
     return session.scalar(reaction)
+
+
+def get_likes(news_id: int, like: bool, session: Session) -> int:
+    reaction = (
+        session.query(func.count(Reaction.news_id))
+        .filter(Reaction.news_id == news_id, Reaction.like == like)
+        .scalar()
+    )
+    return reaction
 
 
 def set_like(news_id: int, user_id: int, like: bool, session: Session) -> None:

@@ -13,7 +13,7 @@ class ReadNewsSchemas(NewsSchemas):
     id: int
     user: User
     status: str
-    reactions: list[LikesSchemas]
+    reactions_info: LikesSchemas | None = None
 
 
 class CreateNewsSchema(NewsSchemas):
