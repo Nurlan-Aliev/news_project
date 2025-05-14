@@ -11,6 +11,7 @@ fastapi = {extras = ["all"], version = "^0.115.12"}
 bcrypt = "^4.3.0"
 pyjwt = "^2.10.1"
 sqlalchemy = "^2.0.40"
+pytest = "^8.3.5"
 
 
 [build-system]
