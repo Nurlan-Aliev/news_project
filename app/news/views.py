@@ -4,8 +4,7 @@ from app.auth.jwt_help import get_current_token_payload
 from app.database import db_helper
 from app.news import schemas
 from app.news import crud
-from app.settings import settings
-
+from app.news.enums import Status
 
 router = APIRouter(tags=["News"])
 
@@ -47,7 +46,7 @@ def update_news(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="This news is not found",
         )
-    if news.status == settings.news_status["confirm"]:
+    if news.status == Status.confirm:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Cannot update confirmed news",

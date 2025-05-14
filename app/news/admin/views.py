@@ -4,7 +4,7 @@ from app.auth.jwt_help import is_admin
 from app.news.admin import crud
 from app.database import db_helper
 from app.news.admin import schemas
-from app.settings import settings
+from app.news.enums import Status
 
 
 router = APIRouter(tags=["Admin"], dependencies=[Depends(is_admin)])
@@ -26,7 +26,7 @@ def approve_news(
     idx: int, session: Session = Depends(db_helper.session_depends)
 ):
 
-    news = crud.verify_news(idx, settings.news_status["confirm"], session)
+    news = crud.verify_news(idx, Status.confirm, session)
     if news:
         return schemas.AdminNewsSchemas.model_validate(news)
     raise HTTPException(
@@ -39,7 +39,7 @@ def reject_news(
     idx: int, session: Session = Depends(db_helper.session_depends)
 ):
 
-    news = crud.verify_news(idx, settings.news_status["reject"], session)
+    news = crud.verify_news(idx, Status.reject, session)
     if news:
         return schemas.AdminNewsSchemas.model_validate(news)
     raise HTTPException(

@@ -3,6 +3,7 @@ from sqlalchemy import select, desc
 from sqlalchemy.orm import Session
 from app.news import schemas
 from app.auth.crud import get_user
+from app.news.enums import Status
 from app.news.models import News
 from app.settings import settings
 
@@ -20,7 +21,7 @@ def create_news(data: schemas.CreateNewsSchema, user, session: Session) -> News:
 def get_all_news(session: Session) -> Sequence[News]:
     stmt = (
         select(News)
-        .where(News.status == settings.news_status["confirm"])
+        .where(News.status == Status.confirm)
         .order_by(desc(News.id))
     )
     all_news = session.scalars(stmt).all()

@@ -2,13 +2,13 @@ from typing import Sequence
 from sqlalchemy import select, desc
 from sqlalchemy.orm import Session
 from app.news.models import News
-from app.settings import settings
+from app.news.enums import Status
 
 
 def get_pending_news(session: Session) -> Sequence[News]:
     stmt = (
         select(News)
-        .where(News.status == settings.news_status["pending"])
+        .where(News.status == Status.pending)
         .order_by(desc(News.id))
     )
     all_news = session.scalars(stmt).all()
