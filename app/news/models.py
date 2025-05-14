@@ -13,7 +13,7 @@ class News(Base):
     content: Mapped[str]
     status: Mapped[str] = mapped_column(default=settings.news_status["pending"])
     user_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+        ForeignKey("users.id", ondelete="SET NULL")
     )
     user: Mapped["Users"] = relationship(back_populates="news")
 
