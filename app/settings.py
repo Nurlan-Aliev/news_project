@@ -11,10 +11,9 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
     ALGORITHM: str
-
     DATABASE_PATH: str
-
     DEBAG: bool
+    ORIGIN: list[str]
 
     news_status: dict = {
         "confirm": "confirm",
