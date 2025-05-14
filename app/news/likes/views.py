@@ -8,19 +8,22 @@ from app.news.likes import crud
 router = APIRouter(tags=["likes"])
 
 
-@router.post("/{news_id}")
+@router.post("/{news_id}/like")
 def set_like(
     news_id: int,
     user=Depends(get_current_token_payload),
     session: Session = Depends(db_helper.session_depends),
 ):
-    if not crud.get_like(news_id, user["id"], session):
-        crud.set_like(news_id, user["id"], session)
+    reaction = crud.get_like(news_id, user["id"], session)
+    if not reaction:
+        crud.set_like(news_id, user["id"], True, session)
+    elif not reaction.like:
+        crud.update_like(reaction, True, session)
     return "like"
 
 
 @router.delete("/{news_id}")
-def delete_like(
+def delete_reaction(
     news_id,
     session: Session = Depends(db_helper.session_depends),
     user=Depends(get_current_token_payload),
@@ -28,3 +31,17 @@ def delete_like(
     reaction = crud.get_like(news_id, user["id"], session)
     crud.delete_like(reaction, session)
     return "delete like"
+
+
+@router.post("/{news_id}/dislike")
+def set_dislike(
+    news_id: int,
+    user=Depends(get_current_token_payload),
+    session: Session = Depends(db_helper.session_depends),
+):
+    reaction = crud.get_like(news_id, user["id"], session)
+    if not reaction:
+        crud.set_like(news_id, user["id"], False, session)
+    elif reaction.like:
+        crud.update_like(reaction, False, session)
+    return "dislike"

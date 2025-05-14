@@ -5,12 +5,12 @@ from app.database import db_helper
 from app.news import schemas
 from app.news import crud
 from app.settings import settings
-from app.news.likes.crud import get_likes
+
 
 router = APIRouter(tags=["News"])
 
 
-@router.post("/", response_model=schemas.ReadNewsSchemas)
+@router.post("", response_model=schemas.ReadNewsSchemas)
 def create_news(
     news: schemas.CreateNewsSchema,
     user=Depends(get_current_token_payload),
@@ -20,7 +20,7 @@ def create_news(
     return schemas.ReadNewsSchemas.model_validate(new_news)
 
 
-@router.get("/", response_model=list[schemas.ReadNewsSchemas])
+@router.get("", response_model=list[schemas.ReadNewsSchemas])
 def get_all_news(session: Session = Depends(db_helper.session_depends)):
     all_news = crud.get_all_news(session)
     return [schemas.ReadNewsSchemas.model_validate(news) for news in all_news]
@@ -49,11 +49,13 @@ def update_news(
         )
     if news.status == settings.news_status["confirm"]:
         raise HTTPException(
-            status_code=400, detail="Cannot update confirmed news"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot update confirmed news",
         )
     if news.user_id != user["id"]:
         raise HTTPException(
-            status_code=403, detail="You can only edit your own news"
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You can only edit your own news",
         )
 
     news = crud.update_news(news, new_data, session)
