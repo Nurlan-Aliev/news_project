@@ -11,7 +11,12 @@ http_bearer = HTTPBearer(auto_error=False)
 
 
 def create_jwt(user: ReadUser) -> str:
-    jwt_pyload = {"id": user.id, "username": user.username, "role": user.role}
+    jwt_pyload = {
+        "id": user.id,
+        "username": user.username,
+        "fullname": user.full_name,
+        "role": user.role,
+    }
     return encode_jwt(payload=jwt_pyload)
 
 
