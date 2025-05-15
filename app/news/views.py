@@ -5,8 +5,6 @@ from app.database import db_helper
 from app.news import schemas
 from app.news import crud
 from app.news.enums import Status
-from app.news.likes.crud import get_likes
-from app.news.likes.schemas import LikesSchemas
 from app.news.read_news import read_news
 
 router = APIRouter(tags=["News"])
