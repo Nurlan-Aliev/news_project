@@ -19,13 +19,19 @@ def get_like(news_id: int, user_id: int, session: Session) -> Reaction:
     return session.scalar(reaction)
 
 
-def get_likes(news_id: int, like: bool, session: Session) -> int:
-    reaction = (
-        session.query(func.count(Reaction.news_id))
-        .filter(Reaction.news_id == news_id, Reaction.like == like)
-        .scalar()
+def get_likes(news_id: int, session: Session) -> dict:
+
+    stmt = (
+        select(Reaction.like, func.count().label("count"))
+        .where(Reaction.news_id == news_id)
+        .group_by(Reaction.like)
     )
-    return reaction
+    results = session.execute(stmt).all()
+    counts = {like: count for like, count in results}
+    return {
+        "likes": counts.get(True, 0),
+        "dislikes": counts.get(False, 0),
+    }
 
 
 def set_like(news_id: int, user_id: int, like: bool, session: Session) -> None:

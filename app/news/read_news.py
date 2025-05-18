@@ -7,9 +7,10 @@ from app.news.models import News
 
 def read_news(news: News, session: Session):
     news = schemas.ReadNewsSchemas.model_validate(news)
+    reaction = get_likes(news.id, session)
     reactions = LikesSchemas(
-        likes=get_likes(news.id, True, session),
-        dislikes=get_likes(news.id, False, session),
+        likes=reaction["likes"],
+        dislikes=reaction["dislikes"],
     )
     news.reactions_info = reactions
     return news
