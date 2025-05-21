@@ -11,7 +11,7 @@ router = APIRouter(tags=["likes"])
 @router.post("/{news_id}/like")
 def set_like(
     news_id: int,
-    user=Depends(get_current_token_payload),
+    user: dict = Depends(get_current_token_payload),
     session: Session = Depends(db_helper.session_depends),
 ):
     reaction = crud.get_like(news_id, user["id"], session)
@@ -19,24 +19,25 @@ def set_like(
         crud.set_like(news_id, user["id"], True, session)
     elif not reaction.like:
         crud.update_like(reaction, True, session)
-    return "like"
+
+    return crud.get_likes(news_id, session)
 
 
 @router.delete("/{news_id}")
 def delete_reaction(
     news_id,
     session: Session = Depends(db_helper.session_depends),
-    user=Depends(get_current_token_payload),
+    user: dict = Depends(get_current_token_payload),
 ):
     reaction = crud.get_like(news_id, user["id"], session)
     crud.delete_like(reaction, session)
-    return "delete like"
+    return crud.get_likes(news_id, session)
 
 
 @router.post("/{news_id}/dislike")
 def set_dislike(
     news_id: int,
-    user=Depends(get_current_token_payload),
+    user: dict = Depends(get_current_token_payload),
     session: Session = Depends(db_helper.session_depends),
 ):
     reaction = crud.get_like(news_id, user["id"], session)
@@ -44,4 +45,4 @@ def set_dislike(
         crud.set_like(news_id, user["id"], False, session)
     elif reaction.like:
         crud.update_like(reaction, False, session)
-    return "dislike"
+    return crud.get_likes(news_id, session)
