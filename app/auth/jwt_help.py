@@ -1,4 +1,6 @@
 from datetime import datetime, UTC, timedelta
+from typing import Optional
+
 from fastapi import HTTPException, status
 from fastapi.params import Depends
 from fastapi.security import HTTPBearer
@@ -59,7 +61,7 @@ def get_current_token_payload(
         return payload
     except AttributeError:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="need to log in "
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="need to log in"
         )
 
 
@@ -74,5 +76,19 @@ def is_admin(token: HTTPBearer = Depends(http_bearer)):
         )
     except AttributeError:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="need to log in "
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="need to log in"
+        )
+
+
+def get_current_user_optional(
+    token: Optional[HTTPBearer] = Depends(http_bearer),
+):
+    if token is None:
+        return None
+    try:
+        payload = decode_jwt(token=token.credentials)
+        return payload
+    except AttributeError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="need to log in"
         )
